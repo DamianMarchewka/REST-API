@@ -20,3 +20,11 @@ def login(data: Login):
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid credentials"
     )
+
+@app.get("/users")
+def get_users():
+    users = []
+    for username in users_db.keys():
+        users.append({"username": username})
+    return users
+
