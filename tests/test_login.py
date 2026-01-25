@@ -3,6 +3,8 @@ from app.main import app
 
 client = TestClient(app)
 
+#=============== login tests ===============
+
 def test_login_successful():
     response = client.post("/login", json={
         "username": "admin",
@@ -30,7 +32,7 @@ def test_invalid_user():
     assert response.status_code == 401
     assert response.json() == {"detail": "invalid credentials"}
 
-
+# =============== users test ===============
 
 def test_get_users():
     response = client.get("/users")
@@ -40,4 +42,25 @@ def test_get_users():
         users.append(user.get("username"))
         assert "password" not in user
     assert "admin" in users
+    
+# =============== register tests ===============
+
+def test_register_success_status():
+    response = client.post("/register", json={
+        "username": "new_user",
+        "password": "0987"
+    })
+    assert response.status_code == 201
+    assert response.json()["message"] == "User Created Successful"
+
+
+def test_register_existing_user_conflict():
+    response = client.post("/register", json={
+        "username": "admin",
+        "password": "6543"
+    })
+    data = response.json()
+    assert response.status_code == 409
+    assert "detail" in data or "message" in data
+    assert data["detail"] == "Conflict: User already exists"
 
