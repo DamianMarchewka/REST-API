@@ -64,3 +64,20 @@ def test_register_existing_user_conflict():
     assert "detail" in data or "message" in data
     assert data["detail"] == "Conflict: User already exists"
 
+
+def test_register_does_not_return_password():
+    response = client.get("/users")
+    assert response.status_code == 200
+    users = []
+    for user in response.json():
+        users.append(user.get("username"))
+        assert "password" not in user
+
+
+def test_users_contains_new_user_after_register():
+    response = client.get("/users")
+    assert response.status_code == 200
+    users = []
+    for user in response.json():
+        users.append(user.get("username"))
+    assert "new_user" in users

@@ -28,3 +28,15 @@ def get_users():
         users.append({"username": username})
     return users
 
+
+@app.post("/register", status_code=201)
+def register(data: Login):
+
+    if data.username not in users_db:
+        users_db.update({data.username: data.password})
+        return {"message": "User Created Successful"}
+    
+    raise HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="Conflict: User already exists"
+    )
